@@ -29,5 +29,5 @@ int main() {
       image[h][w] = accumulated / (float)samples_cnt;
     }
   }
-  ImagePrinter::printPpm(image, "background.ppm");
+  ImagePrinter::printPpm(image, "world.ppm");
 }
