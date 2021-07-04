@@ -5,6 +5,7 @@
 class Ray {
  public:
   // Default to start from (0, 0, 0)
+  Ray() = default;
   explicit Ray(Direction dir) : dir_(dir) {}
   Ray(Point origin, Direction dir) : origin_(origin), dir_(dir) {}
 
@@ -15,8 +16,8 @@ class Ray {
   Point at(double t) const { return origin_ + t * dir_; }
 
  private:
-  const Point origin_;
-  const Direction dir_;
+  Point origin_;
+  Direction dir_;
 };
 
 #endif

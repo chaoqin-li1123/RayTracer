@@ -8,7 +8,7 @@ int main() {
   Direction vertical(0, VIEWPORT_H, 0);
   Point lower_left_corner = origin - (horizontal / 2.0) - (vertical / 2.0) -
                             Direction(0.0, 0.0, FOCAL_LEN);
-  Color image[IMAGE_H][IMAGE_W]{};
+  Image image;
   World::init();
   for (int h = 0; h < IMAGE_H; h++) {
     for (int w = 0; w < IMAGE_W; w++) {

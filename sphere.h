@@ -1,11 +1,14 @@
 #ifndef SPHERE_H
 #define SPHERE_H
-#include "hittable.h"
+#include <cassert>
+#include <memory>
+
+#include "material.h"
 
 class Sphere : public Hittable {
  public:
-  Sphere(Point const& center, double radius)
-      : center_(center), radius_(radius) {}
+  Sphere(Point const& center, double radius, std::shared_ptr<Material> material)
+      : center_(center), radius_(radius), material_(material) {}
 
   Point center() const { return center_; }
   bool hit(Ray const& ray, double t_min, double t_max,
@@ -24,8 +27,10 @@ class Sphere : public Hittable {
       if (root < t_min || root > t_max) return false;
     }
     hit_record.t_ = root;
-    hit_record.p_ = ray.at(root);
-    hit_record.normal_ = (ray.at(root) - center_).normalize();
+    hit_record.p_ = ray.at(hit_record.t_);
+    Direction outward_normal = (hit_record.p_ - center_) / radius_;
+    hit_record.setFaceNormal(ray, outward_normal);
+    hit_record.material_ = material_;
 
     return true;
   }
@@ -33,6 +38,7 @@ class Sphere : public Hittable {
  private:
   Point center_;
   double radius_;
+  std::shared_ptr<Material> material_;
 };
 
 #endif

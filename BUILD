@@ -15,6 +15,12 @@ cc_library(
 cc_library(
     name = "sphere",
     hdrs = ["sphere.h"],
+    deps = [":material"]
+)
+
+cc_library(
+    name = "material",
+    hdrs = ["material.h"],
     deps = [":hittable"]
 )
 

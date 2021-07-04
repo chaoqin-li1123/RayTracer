@@ -2,6 +2,7 @@
 #define VEC3_H
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <type_traits>
 
@@ -70,8 +71,16 @@ class Vec3 {
 
   Vec3 &operator/=(const T div) { return (*this) *= (1 / div); }
 
-  Vec3 normalize() { return Vec3(*this) /= len(); }
+  Vec3 normalize() const {
+    T l = len();
+    return Vec3(x() / l, y() / l, z() / l);
+  }
 
+  bool nearZero() {
+    constexpr double threshhold = 1e-8;
+    return (std::abs(x()) < threshhold) && (std::abs(y()) < threshhold) &&
+           (std::abs(z()) < threshhold);
+  }
   static Vec3 rand_unit_vec() {
     return Vec3(rand() % 101 - 50, rand() % 101 - 50, rand() % 101 - 50)
         .normalize();
@@ -107,6 +116,11 @@ Vec3<T> operator-(Vec3<T> const &v1, Vec3<T> const &v2) {
 }
 
 template <typename T>
+Vec3<T> operator*(Vec3<T> const &v1, Vec3<T> const &v2) {
+  return Vec3<T>(v1.x() * v2.x(), v1.y() * v2.y(), v1.z() * v2.z());
+}
+
+template <typename T>
 T dot(Vec3<T> const &v1, Vec3<T> const &v2) {
   return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
 }
@@ -116,6 +130,21 @@ Vec3<T> cross(Vec3<T> const &v1, Vec3<T> const &v2) {
   return Vec3<T>(v1.y() * v2.z() - v1.z() * v1.y(),
                  v1.z() * v2.x() - v1.x() * v2.z(),
                  v1.x() * v2.y() - v1.y() * v2.z());
+}
+
+template <typename T>
+Vec3<T> reflect(Vec3<T> const &v, Vec3<T> const &n) {
+  return v - 2 * dot(v, n) * n;
+}
+
+// Expects in and n to be unit vector.
+template <typename T>
+Vec3<T> refract(Vec3<T> const &in, Vec3<T> const &n, double refraction_ratio) {
+  double cos_theta = std::min(dot(-in, n), 1.0);
+  Vec3<T> out_perpendicular = refraction_ratio * (in + cos_theta * n);
+  Vec3<T> out_parallel =
+      -sqrt(std::abs(1.0 - out_perpendicular.lenSquared())) * n;
+  return out_perpendicular + out_parallel;
 }
 
 using Point = Vec3<double>;
