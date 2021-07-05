@@ -1,14 +1,9 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
-#include <cfloat>
-#include <cmath>
 #include <memory>
 #include <vector>
 
 #include "ray.h"
-
-constexpr double INF = DBL_MAX;
-constexpr double PI = M_PI;
 
 class Material;
 

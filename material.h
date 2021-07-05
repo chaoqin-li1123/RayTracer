@@ -62,9 +62,20 @@ class Dielectric : public Material {
     attenuation = Color(1.0, 1.0, 1.0);
     double refraction_radio =
         hit_record.front_face_ ? (1.0 / refraction_index_) : refraction_index_;
-    Direction refracted = refract(ray_in.direction().normalize(),
-                                  hit_record.normal_, refraction_radio);
-    scattered = Ray(hit_record.p_, refracted);
+
+    Direction unit_direction = ray_in.direction().normalize();
+
+    const double cos_theta =
+        std::min(dot(-unit_direction, hit_record.normal_), 1.0);
+    const double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+    bool cannot_refract = refraction_radio * sin_theta > 1.0;
+    Direction next_direction;
+    if (cannot_refract)
+      next_direction = reflect(unit_direction, hit_record.normal_);
+    else
+      next_direction = refract(ray_in.direction().normalize(),
+                               hit_record.normal_, refraction_radio);
+    scattered = Ray(hit_record.p_, next_direction);
     return true;
   }
 

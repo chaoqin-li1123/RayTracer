@@ -3,7 +3,14 @@ load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 cc_binary(
     name = "main",
     srcs = ["main.cc"],
-    deps = [":image", ":world"]
+    deps = [":camera"],
+    linkopts = ["-lpthread"]
+)
+
+cc_library(
+    name = "camera",
+    hdrs = ["camera.h"],
+    deps = [":world"]
 )
 
 cc_library(
@@ -43,13 +50,12 @@ cc_library(
 )
 
 cc_library(
-    name = "image",
-    hdrs = ["image.h"],
-    deps = [":vec3"]
+    name = "vec3",
+    hdrs = ["vec3.h"],
+    deps = [":utility"]
 )
 
-
 cc_library(
-    name = "vec3",
-    hdrs = ["vec3.h"]
+    name = "utility",
+    hdrs = ["utility.h"]
 )

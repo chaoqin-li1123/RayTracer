@@ -3,8 +3,9 @@
 
 #include <algorithm>
 #include <cassert>
-#include <cmath>
 #include <type_traits>
+
+#include "utility.h"
 
 template <typename T>
 class Vec3 {
@@ -82,8 +83,25 @@ class Vec3 {
            (std::abs(z()) < threshhold);
   }
   static Vec3 rand_unit_vec() {
-    return Vec3(rand() % 101 - 50, rand() % 101 - 50, rand() % 101 - 50)
-        .normalize();
+    Vec3 vec;
+    while (vec.nearZero())
+      vec = Vec3(rand() % 101 - 50, rand() % 101 - 50, rand() % 101 - 50);
+    return vec.normalize();
+  }
+
+  static Vec3 rand_unit_vec_in_xy_plane() {
+    Vec3 vec;
+    while (vec.nearZero()) vec = Vec3(rand() % 101 - 50, rand() % 101 - 50, 0);
+    return vec.normalize();
+  }
+
+  static Vec3 random() {
+    return Vec3(rand_double(), rand_double(), rand_double());
+  }
+
+  static Vec3 random(double min, double max) {
+    return Vec3(rand_double(min, max), rand_double(min, max),
+                rand_double(min, max));
   }
 
  private:
@@ -127,9 +145,9 @@ T dot(Vec3<T> const &v1, Vec3<T> const &v2) {
 
 template <typename T>
 Vec3<T> cross(Vec3<T> const &v1, Vec3<T> const &v2) {
-  return Vec3<T>(v1.y() * v2.z() - v1.z() * v1.y(),
+  return Vec3<T>(v1.y() * v2.z() - v1.z() * v2.y(),
                  v1.z() * v2.x() - v1.x() * v2.z(),
-                 v1.x() * v2.y() - v1.y() * v2.z());
+                 v1.x() * v2.y() - v1.y() * v2.x());
 }
 
 template <typename T>
