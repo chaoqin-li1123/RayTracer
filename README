@@ -1,4 +1,4 @@
-This is a ray tracing render following the tutorial Ray Tracing in One Weekend(https://github.com/RayTracing/raytracing.github.io/tree/master/src/InOneWeekend).
+This is a ray tracing render following the tutorial Ray Tracing in One Weekend(https://raytracing.github.io/books/RayTracingInOneWeekend.html).
 
 Generate a random scene with spheres of different material(glass, metal and diffusing material).
 
