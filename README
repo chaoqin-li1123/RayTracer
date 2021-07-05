@@ -1,0 +1,13 @@
+This is a ray tracing render following the tutorial Ray Tracing in One Weekend(https://github.com/RayTracing/raytracing.github.io/tree/master/src/InOneWeekend).
+
+Generate a random scene with spheres of different material(glass, metal and diffusing material).
+
+To build the executable:
+bazel build //:main
+To run the executabl:
+./bazel-bin/main
+
+Or simply
+bazel run //:main
+
+The image is in .ppm format, I manually export it in .png format to be displayed in github.

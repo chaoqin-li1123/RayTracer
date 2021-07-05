@@ -8,6 +8,8 @@ int main() {
   Image image;
   Camera camera(Point(13, 2, 3), Point(0, 0, 0), Direction(0, 1, 0), 20,
                 ASPECT_RATIO, 0.04);
+  // Divide the workload and spawn multiple threads to handle it.
+  // TODO(chaoqin-li1123): Use GPU for parallelism.
   int thread_cnt = std::thread::hardware_concurrency();
   int h_interval = IMAGE_H / thread_cnt;
   auto func = [&](int h0, int h1) {
