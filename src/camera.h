@@ -11,12 +11,12 @@ using color_t = uint8_t;
 
 // Hardcode the screen and camera for now.
 constexpr double ASPECT_RATIO = 16.0 / 9.0;
-constexpr int IMAGE_W = 800;
+constexpr int IMAGE_W = 1024;
 constexpr int IMAGE_H = IMAGE_W / ASPECT_RATIO;
 
 using Image = std::array<std::array<Color, IMAGE_W>, IMAGE_H>;
 
-constexpr int SAMPLE_RATE = 20;
+constexpr int SAMPLE_RATE = 15;
 
 // For convenience define some of the color utility in image.h
 static color_t float2color(float num) {

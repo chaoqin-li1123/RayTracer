@@ -15,8 +15,7 @@ class Material {
 class Lambertian : public Material {
  public:
   virtual ~Lambertian() = default;
-  Lambertian(std::unique_ptr<Texture>&& texture)
-      : texture_(std::move(texture)) {}
+  Lambertian(std::shared_ptr<Texture> texture) : texture_(texture) {}
   Lambertian(const Color& albedo) : texture_(new ConstTexture(albedo)) {}
   virtual bool scatter(Ray const& ray, HitRecord const& hit_record,
                        Color& attenuation, Ray& scattered) const override {
@@ -32,7 +31,7 @@ class Lambertian : public Material {
   }
 
  private:
-  std::unique_ptr<Texture> texture_;
+  std::shared_ptr<Texture> texture_;
 };
 
 class Metal : public Material {

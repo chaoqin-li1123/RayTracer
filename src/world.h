@@ -10,7 +10,7 @@
 #include "sphere.h"
 #include "vec3.h"
 
-constexpr int MAX_REFLECTION = 40;
+constexpr int MAX_REFLECTION = 30;
 
 struct World {
   static Color findColor(Ray const& ray, int reflections) {
@@ -37,8 +37,17 @@ struct World {
   static void init() {
     // Add ground
     addSphere(
-        std::make_shared<Lambertian>(std::make_unique<CheckerTexture>(1000)),
+        std::make_shared<Lambertian>(std::make_shared<CheckerTexture>(1000)),
         Point(0, -1000, 0), 1000);
+
+    std::shared_ptr<ImageTexture> blue_texture =
+        std::make_shared<ImageTexture>("blue.jpeg");
+    std::shared_ptr<ImageTexture> gold_texture =
+        std::make_shared<ImageTexture>("gold.jpg");
+    std::shared_ptr<ImageTexture> grey_texture =
+        std::make_shared<ImageTexture>("grey.jpg");
+    std::shared_ptr<ImageTexture> fire_texture =
+        std::make_shared<ImageTexture>("fire.jpeg");
 
     for (int i = -11; i < 11; i++) {
       for (int j = -11; j < 11; j++) {
@@ -47,24 +56,39 @@ struct World {
         Point center(i + rand_double(0, 0.9), radius, j + rand_double(0, 0.9));
         if ((center - Point(6, 0.2, 0)).len() <= 0.9) continue;
         std::shared_ptr<Material> material;
-        if (material_lottery < 80) {
-          Color albedo = Color::random();
-          material = std::make_shared<Lambertian>(albedo);
-        } else if (material_lottery < 95) {
+        if (material_lottery < 20) {
+          switch (material_lottery % 5) {
+            case 0:
+              material = std::make_shared<Lambertian>(grey_texture);
+              break;
+            case 1:
+              material = std::make_shared<Lambertian>(blue_texture);
+              break;
+            case 2:
+              material = std::make_shared<Lambertian>(gold_texture);
+              break;
+            default:
+              Color albedo = Color::random();
+              material = std::make_shared<Lambertian>(albedo);
+              break;
+          }
+        } else if (material_lottery < 33) {
           Color albedo = Color::random(0.5, 1);
           double fuzz = rand_double(0, 0.5);
           material = std::make_shared<Metal>(albedo, fuzz);
-        } else {
+        } else if (material_lottery < 45) {
           material = std::make_shared<Dielectric>(1.5);
         }
-        addSphere(material, center, radius);
+        if (material) addSphere(material, center, radius);
       }
     }
 
     addSphere(std::make_shared<Dielectric>(1.5), Point(0, 1, 0), 1.0);
-    addSphere(std::make_shared<Lambertian>(
-                  std::make_unique<ImageTexture>("earthmap.jpg")),
-              Point(-6, 1, 0), 1.0);
+    addSphere(std::make_shared<Lambertian>(fire_texture), Point(-6, 1, 0), 1.0);
+    addSphere(std::make_shared<Lambertian>(blue_texture), Point(3, 2.5, -3),
+              0.9);
+    addSphere(std::make_shared<Lambertian>(gold_texture), Point(-5, 2.3, 4),
+              1.5);
 
     addSphere(std::make_shared<Metal>(Color(0.7, 0.6, 0.5), 0.0),
               Point(6, 1, 0), 1.0);

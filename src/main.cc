@@ -6,7 +6,7 @@
 int main() {
   World::init();
   Image image;
-  Camera camera(Point(13, 2, 3), Point(0, 0, 0), Direction(0, 1, 0), 20,
+  Camera camera(Point(15, 2, 3), Point(0, 0, 0), Direction(0, 1, 0), 30,
                 ASPECT_RATIO, 0.04);
   // Divide the workload and spawn multiple threads to handle it.
   // TODO(chaoqin-li1123): Use GPU for parallelism.
