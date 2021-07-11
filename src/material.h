@@ -3,6 +3,8 @@
 #include <iostream>
 
 #include "hittable.h"
+#include "texture.h"
+
 class Material {
  public:
   virtual ~Material() = default;
@@ -13,7 +15,9 @@ class Material {
 class Lambertian : public Material {
  public:
   virtual ~Lambertian() = default;
-  Lambertian(const Color& albedo) : albedo_(albedo) {}
+  Lambertian(std::unique_ptr<Texture>&& texture)
+      : texture_(std::move(texture)) {}
+  Lambertian(const Color& albedo) : texture_(new ConstTexture(albedo)) {}
   virtual bool scatter(Ray const& ray, HitRecord const& hit_record,
                        Color& attenuation, Ray& scattered) const override {
     Direction scatter_direction =
@@ -23,12 +27,12 @@ class Lambertian : public Material {
     }
 
     scattered = Ray(hit_record.p_, scatter_direction);
-    attenuation = albedo_;
+    attenuation = texture_->getColor(hit_record.normal_);
     return true;
   }
 
  private:
-  Color albedo_;
+  std::unique_ptr<Texture> texture_;
 };
 
 class Metal : public Material {

@@ -28,7 +28,7 @@ cc_library(
 cc_library(
     name = "material",
     hdrs = ["material.h"],
-    deps = [":hittable"]
+    deps = [":hittable", ":texture"]
 )
 
 cc_library(
@@ -44,8 +44,14 @@ cc_library(
 )
 
 cc_library(
+    name = "texture",
+    hdrs = ["texture.h"],
+    deps = [":vec3"]
+)
+
+cc_library(
     name = "ray",
-    hdrs = ["ray.h"],
+    hdrs = ["ray.h", "stb_image.h"],
     deps = [":vec3"]
 )
 

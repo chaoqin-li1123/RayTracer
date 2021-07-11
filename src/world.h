@@ -36,15 +36,16 @@ struct World {
   }
   static void init() {
     // Add ground
-    addSphere(std::make_shared<Lambertian>(Color(0.5, 0.5, 0.5)),
-              Point(0, -1000, 0), 1000);
+    addSphere(
+        std::make_shared<Lambertian>(std::make_unique<CheckerTexture>(1000)),
+        Point(0, -1000, 0), 1000);
 
     for (int i = -11; i < 11; i++) {
       for (int j = -11; j < 11; j++) {
         int material_lottery = rand() % 100;
         double radius = rand_double(0.1, 0.2);
         Point center(i + rand_double(0, 0.9), radius, j + rand_double(0, 0.9));
-        if ((center - Point(4, 0.2, 0)).len() <= 0.9) continue;
+        if ((center - Point(6, 0.2, 0)).len() <= 0.9) continue;
         std::shared_ptr<Material> material;
         if (material_lottery < 80) {
           Color albedo = Color::random();
@@ -61,10 +62,12 @@ struct World {
     }
 
     addSphere(std::make_shared<Dielectric>(1.5), Point(0, 1, 0), 1.0);
-    addSphere(std::make_shared<Lambertian>(Color(0.4, 0.2, 0.1)),
-              Point(-4, 1, 0), 1.0);
+    addSphere(std::make_shared<Lambertian>(
+                  std::make_unique<ImageTexture>("earthmap.jpg")),
+              Point(-6, 1, 0), 1.0);
+
     addSphere(std::make_shared<Metal>(Color(0.7, 0.6, 0.5), 0.0),
-              Point(4, 1, 0), 1.0);
+              Point(6, 1, 0), 1.0);
   }
 
  private:
