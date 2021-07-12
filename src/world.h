@@ -6,6 +6,7 @@
 
 #include "background.h"
 #include "hittable.h"
+#include "material.h"
 #include "ray.h"
 #include "sphere.h"
 #include "vec3.h"
@@ -22,10 +23,11 @@ struct World {
     if (world.hit(ray, 1e-3, INF, hit_record)) {
       Ray scattered;
       Color attenuation;
-      if (hit_record.material_->scatter(ray, hit_record, attenuation,
-                                        scattered))
-        return findColor(scattered, reflections + 1) * attenuation;
-      return Color(0, 0, 0);
+      Color emitted = hit_record.material_->emit(hit_record);
+      if (!hit_record.material_->scatter(ray, hit_record, attenuation,
+                                         scattered))
+        return emitted;
+      return findColor(scattered, reflections + 1) * attenuation + emitted;
     }
     return Background::color(ray);
   }
@@ -59,17 +61,14 @@ struct World {
         if (material_lottery < 20) {
           switch (material_lottery % 5) {
             case 0:
-              material = std::make_shared<Lambertian>(grey_texture);
+              material = std::make_shared<DiffusingLight>(blue_texture, 1.0);
               break;
             case 1:
-              material = std::make_shared<Lambertian>(blue_texture);
-              break;
-            case 2:
               material = std::make_shared<Lambertian>(gold_texture);
               break;
             default:
               Color albedo = Color::random();
-              material = std::make_shared<Lambertian>(albedo);
+              material = std::make_shared<DiffusingLight>(albedo, 1.0);
               break;
           }
         } else if (material_lottery < 33) {
@@ -84,11 +83,12 @@ struct World {
     }
 
     addSphere(std::make_shared<Dielectric>(1.5), Point(0, 1, 0), 1.0);
-    addSphere(std::make_shared<Lambertian>(fire_texture), Point(-6, 1, 0), 1.0);
-    addSphere(std::make_shared<Lambertian>(blue_texture), Point(3, 2.5, -3),
-              0.9);
-    addSphere(std::make_shared<Lambertian>(gold_texture), Point(-5, 2.3, 4),
-              1.5);
+    addSphere(std::make_shared<DiffusingLight>(fire_texture, 1.0),
+              Point(-6, 1, 0), 1.0);
+    addSphere(std::make_shared<DiffusingLight>(blue_texture, 1.0),
+              Point(3, 2.5, -3), 0.9);
+    addSphere(std::make_shared<DiffusingLight>(gold_texture, 5.0),
+              Point(-5, 2.3, 4), 1.5);
 
     addSphere(std::make_shared<Metal>(Color(0.7, 0.6, 0.5), 0.0),
               Point(6, 1, 0), 1.0);

@@ -1,6 +1,7 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 #include <iostream>
+#include <memory>
 
 #include "hittable.h"
 #include "texture.h"
@@ -10,6 +11,7 @@ class Material {
   virtual ~Material() = default;
   virtual bool scatter(Ray const& ray, HitRecord const& hit_record,
                        Color& attenuation, Ray& scattered) const = 0;
+  virtual Color emit(HitRecord const&) const { return Color(0, 0, 0); }
 };
 
 class Lambertian : public Material {
@@ -84,6 +86,25 @@ class Dielectric : public Material {
 
  private:
   double refraction_index_;
+};
+
+class DiffusingLight : public Material {
+ public:
+  DiffusingLight(Color color, float factor)
+      : texture_(new ConstTexture(color)), factor_(factor) {}
+  DiffusingLight(std::shared_ptr<Texture> texture, float factor)
+      : texture_(texture), factor_(factor) {}
+  virtual bool scatter(Ray const&, HitRecord const&, Color&,
+                       Ray&) const override {
+    return false;
+  }
+  virtual Color emit(HitRecord const& hit_record) const override {
+    return factor_ * texture_->getColor(hit_record.normal_);
+  }
+
+ private:
+  std::shared_ptr<Texture> texture_;
+  float factor_;
 };
 
 #endif
