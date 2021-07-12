@@ -16,7 +16,7 @@ constexpr int IMAGE_H = IMAGE_W / ASPECT_RATIO;
 
 using Image = std::array<std::array<Color, IMAGE_W>, IMAGE_H>;
 
-constexpr int SAMPLE_RATE = 15;
+constexpr int SAMPLE_RATE = 30;
 
 // For convenience define some of the color utility in image.h
 static color_t float2color(float num) {

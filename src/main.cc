@@ -20,12 +20,12 @@ int main() {
         // Take SAMPLE_RATE ^ 2 samples for each pixel for anti-aliasing.
         for (int i = -SAMPLE_RATE / 2; i < SAMPLE_RATE / 2; i++) {
           for (int j = -SAMPLE_RATE / 2; j < SAMPLE_RATE / 2; j++) {
-            constexpr double SAMPLE_INTERVAL = 1.0 / SAMPLE_RATE;
+            constexpr double SAMPLE_INTERVAL = 2.0 / SAMPLE_RATE;
             double dx = (w + i * SAMPLE_INTERVAL) / (IMAGE_W - 1);
             double dy = (h + j * SAMPLE_INTERVAL) / (IMAGE_H - 1);
             if (dx < 0.0 || dx > 1.0 || dy < 0.0 || dy > 1.0) continue;
             Ray r = camera.emitRay(dx, dy);
-            accumulated += World::findColor(r, 0);
+            accumulated += World::traceRay(r, 0);
             samples_cnt++;
           }
         }

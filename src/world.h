@@ -11,25 +11,40 @@
 #include "sphere.h"
 #include "vec3.h"
 
-constexpr int MAX_REFLECTION = 30;
+constexpr int MAX_REFLECTION = 50;
 
 struct World {
-  static Color findColor(Ray const& ray, int reflections) {
+  static Color traceRay(Ray const& ray, int reflections) {
     if (reflections > MAX_REFLECTION) {
       return Color(0, 0, 0);
     }
 
+    Ray scattered;
+    double t = randomScatter(ray, scattered);
     HitRecord hit_record;
     if (world.hit(ray, 1e-3, INF, hit_record)) {
-      Ray scattered;
+      // Scatterred by random particles before hitting anything.
+      if (hit_record.t_ > t) {
+        return 0.9f * traceRay(scattered, reflections + 1);
+      }
       Color attenuation;
       Color emitted = hit_record.material_->emit(hit_record);
+
       if (!hit_record.material_->scatter(ray, hit_record, attenuation,
-                                         scattered))
+                                         scattered)) {
         return emitted;
-      return findColor(scattered, reflections + 1) * attenuation + emitted;
+      }
+
+      return traceRay(scattered, reflections + 1) * attenuation + emitted;
     }
     return Background::color(ray);
+  }
+
+  static double randomScatter(Ray const& ray, Ray& scattered) {
+    double scatter_distance = rand_double(0.01, 25.0);
+    double t = scatter_distance / ray.direction().len();
+    scattered = Ray(ray.at(t), Direction::rand_unit_vec());
+    return t;
   }
 
   static void addSphere(std::shared_ptr<Material> material, Point const& center,
@@ -46,8 +61,6 @@ struct World {
         std::make_shared<ImageTexture>("blue.jpeg");
     std::shared_ptr<ImageTexture> gold_texture =
         std::make_shared<ImageTexture>("gold.jpg");
-    std::shared_ptr<ImageTexture> grey_texture =
-        std::make_shared<ImageTexture>("grey.jpg");
     std::shared_ptr<ImageTexture> fire_texture =
         std::make_shared<ImageTexture>("fire.jpeg");
 
